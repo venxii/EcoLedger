@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Events & Groups</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="../scripts/app.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <h1>Upcoming Events & Community Groups</h1>
+
+    <!-- Events Section -->
+    <div id="eventsSection">
+        <h2>Nearby Sustainability Events</h2>
+        <ul id="eventList">
+            <!-- Dynamic event listing will be populated here -->
+        </ul>
+        <button id="addEventButton">Add Event</button>
+    </div>
+
+    <!-- Groups Section -->
+    <div id="groupsSection">
+        <h2>Join Sustainability Groups</h2>
+        <ul id="groupList">
+            <!-- Dynamic group listing will be populated here -->
+        </ul>
+        <button id="createGroupButton">Create New Group</button>
+    </div>
+
+    <!-- Event/Group Details Modal (Pop-up) -->
+    <div id="detailsModal" style="display:none;">
+        <h2>Event/Group Details</h2>
+        <p id="eventGroupDescription"></p>
+        <p id="eventGroupSchedule"></p>
+        <button id="joinButton">Join Event/Group</button>
+        <button id="closeModal">Close</button>
+    </div>
+
+    <script>
+        // Initialize Web3 and contract interaction (for dynamic data fetching)
+        const web3 = new Web3(window.ethereum);
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        // Function to load events and groups dynamically
+        async function loadEventsAndGroups() {
+            try {
+                // Fetch events and groups data from your blockchain or database
+                const events = await contract.methods.getEvents().call(); // Placeholder
+                const groups = await contract.methods.getGroups().call(); // Placeholder
+
+                // Populate event list
+                const eventList = document.getElementById("eventList");
+                events.forEach(event => {
+                    const eventItem = document.createElement("li");
+                    eventItem.textContent = `${event.name} on ${event.date}`;
+                    eventItem.onclick = () => showEventDetails(event);
+                    eventList.appendChild(eventItem);
+                });
+
+                // Populate group list
+                const groupList = document.getElementById("groupList");
+                groups.forEach(group => {
+                    const groupItem = document.createElement("li");
+                    groupItem.textContent = `${group.name}`;
+                    groupItem.onclick = () => showGroupDetails(group);
+                    groupList.appendChild(groupItem);
+                });
+            } catch (error) {
+                console.error("Error loading events/groups:", error);
+            }
+        }
+
+        // Function to show event/group details in modal
+        function showEventDetails(event) {
+            const modal = document.getElementById("detailsModal");
+            document.getElementById("eventGroupDescription").textContent = event.description;
+            document.getElementById("eventGroupSchedule").textContent = `Scheduled for: ${event.schedule}`;
+            document.getElementById("joinButton").onclick = () => joinEvent(event.id);
+            modal.style.display = "block";
+        }
+
+        function showGroupDetails(group) {
+            const modal = document.getElementById("detailsModal");
+            document.getElementById("eventGroupDescription").textContent = group.description;
+            document.getElementById("eventGroupSchedule").textContent = `Join group to participate in future activities`;
+            document.getElementById("joinButton").onclick = () => joinGroup(group.id);
+            modal.style.display = "block";
+        }
+
+        // Function to join event
+        async function joinEvent(eventId) {
+            // Call contract to join event (make sure your contract has this functionality)
+            await contract.methods.joinEvent(eventId).send({ from: userAddress });
+            alert("You have successfully joined the event!");
+            document.getElementById("detailsModal").style.display = "none";
+        }
+
+        // Function to join group
+        async function joinGroup(groupId) {
+            // Call contract to join group
+            await contract.methods.joinGroup(groupId).send({ from: userAddress });
+            alert("You have successfully joined the group!");
+            document.getElementById("detailsModal").style.display = "none";
+        }
+
+        // Close the modal
+        document.getElementById("closeModal").onclick = () => {
+            document.getElementById("detailsModal").style.display = "none";
+        };
+
+        // Load events and groups when page is loaded
+        window.onload = async () => {
+            if (window.location.pathname === "/events_groups.html") {
+                await loadEventsAndGroups();
+            }
+        };
+    </script>
+</body>
+</html>

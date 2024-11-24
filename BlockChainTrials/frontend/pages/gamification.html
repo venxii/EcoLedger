@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenChain Gamification</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2a9d8f;
+        }
+        .leaderboard, .badges {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #2a9d8f;
+            color: #fff;
+        }
+        button {
+            background-color: #2a9d8f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #21867a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to GreenChain Gamification</h1>
+    <h2>Leaderboard</h2>
+    <div class="leaderboard">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>User Name</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardTable">
+                <!-- Leaderboard rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Your Badges</h2>
+    <div class="badges">
+        <ul id="badgesList">
+            <!-- User badges will be dynamically listed here -->
+        </ul>
+    </div>
+
+    <button id="refreshData">Refresh Data</button>
+
+    <script>
+        // ABI for the GreenChain contract
+        const contractABI = [
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "getLeaderboard",
+                "outputs": [{ "name": "", "type": "address[]" }],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [{ "name": "user", "type": "address" }],
+                "name": "getUserDetails",
+                "outputs": [
+                    { "name": "", "type": "string" },
+                    { "name": "", "type": "string" },
+                    { "name": "", "type": "uint256" }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [{ "name": "user", "type": "address" }],
+                "name": "getUserBadges",
+                "outputs": [{ "name": "", "type": "string[]" }],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        // Replace with your deployed contract address
+        const contractAddress = "0xE7489282F2A9875ACcd1dfa5f1fA3DC77381b79A";
+
+        const web3 = new Web3(window.ethereum);
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        async function fetchLeaderboard() {
+            try {
+                const leaderboard = await contract.methods.getLeaderboard().call();
+
+                // Clear the table
+                const leaderboardTable = document.getElementById("leaderboardTable");
+                leaderboardTable.innerHTML = "";
+
+                // Fetch details of each user
+                for (let i = 0; i < leaderboard.length; i++) {
+                    const user = leaderboard[i];
+                    const [name, , points] = await contract.methods.getUserDetails(user).call();
+
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td>${name || "Unknown"}</td>
+                        <td>${points || 0}</td>
+                    `;
+                    leaderboardTable.appendChild(row);
+                }
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+                alert("Failed to load leaderboard. Please check the console for details.");
+            }
+        }
+
+        async function fetchUserBadges() {
+            try {
+                // Request the user's account from MetaMask
+                const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+                const userAddress = accounts[0];
+
+                const badges = await contract.methods.getUserBadges(userAddress).call();
+
+                // Clear the badge list
+                const badgesList = document.getElementById("badgesList");
+                badgesList.innerHTML = "";
+
+                // Add each badge to the list
+                badges.forEach(badge => {
+                    const li = document.createElement("li");
+                    li.textContent = badge;
+                    badgesList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error fetching badges:", error);
+                alert("Failed to load badges. Please check the console for details.");
+            }
+        }
+
+        document.getElementById("refreshData").addEventListener("click", async () => {
+            await fetchLeaderboard();
+            await fetchUserBadges();
+        });
+
+        // Fetch data when the page loads
+        window.onload = async () => {
+            await fetchLeaderboard();
+            await fetchUserBadges();
+        };
+    </script>
+</body>
+</html>
