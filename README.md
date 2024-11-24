@@ -57,7 +57,7 @@ npm run dev
 - For basic integration, start with index.html.
 
  
-Flowcharts
+# Flowcharts
 1. User Authentication Flow
 Explains the process from user login/registration to dashboard access.
 Includes data validation and error handling.
@@ -67,8 +67,39 @@ Includes modules for energy optimization, waste reduction, and community initiat
 3. Data Visualization Flow
 Displays how collected data is processed and rendered into interactive graphs/charts.
 Integrates APIs for real-time data fetching.
-Contributors
+# Contributors
 Srija: Design and Frontend
 Veda & Indrani: Backend Development and Remix Setup
-License
-This project is licensed under the MIT License. See LICENSE for details.
+
+# Open Source Components used : 
+### Django
+- Version: 4.2
+- License: BSD 3-Clause License
+- Usage: Django is used as the backend framework to manage server-side operations, database handling, and APIs.
+- Source: Django GitHub Repository
+### Remix
+- Version: 1.17.x (or latest stable version)
+- License: MIT License
+- Usage: Remix is used for building the frontend of the application with server-side rendering and React-based architecture.
+- Source: Remix GitHub Repository
+### NLTK (Natural Language Toolkit)
+- Version: 3.9.2
+- License: Apache 2.0 License
+- Usage: NLTK is used in the Generative AI module for natural language processing tasks like tokenization and sentiment analysis.
+- Source: NLTK GitHub Repository
+### Chart.js
+- Version: 4.0.1
+- License: MIT License
+- Usage: Used for creating interactive data visualizations and graphs in the dashboard.
+- Source: Chart.js GitHub Repository
+### Flask
+- Version: 2.3
+- License: BSD 3-Clause License
+- Usage: Flask is used as an auxiliary micro-framework for certain modular backend services.
+- Source: Flask GitHub Repository
+### TensorFlow.js
+- Version: 4.0.0
+- License: Apache 2.0 License
+- Usage: Enables running AI/ML models directly in the browser for real-time generative AI recommendations.
+- Source: TensorFlow.js GitHub Repository
+
