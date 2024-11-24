@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="../scripts/app.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+    <h1>Welcome to Your Dashboard</h1>
+    
+    <div>
+        <h2>User Details</h2>
+        <p id="userId">User ID: </p>
+        <p id="userName">Name: </p>
+        <p id="userEmail">Email: </p>
+        <p id="greenTokens">Green Tokens: </p>
+    </div>
+
+    <!-- Personalized Suggestions Section -->
+    <div>
+        <h2>Personalized Suggestions</h2>
+        <ul>
+            <li>Plant a tree</li>
+            <li>Join a cleanup drive</li>
+            <li>Reduce water consumption</li>
+        </ul>
+    </div>
+
+    <!-- Impact Stats Section -->
+    <div>
+        <h2>Your Impact</h2>
+        <p>Carbon Saved: 10 kg</p> <!-- Example data -->
+        <p>Resources Recycled: 25 kg</p> <!-- Example data -->
+        <p>Personal Ranking: #5</p> <!-- Example data -->
+    </div>
+
+    <!-- Quick Links Section -->
+    <div>
+        <h2>Quick Links</h2>
+        <ul>
+            <li><a href="gamification.html">LeaderBoard</a></li>
+            <li><a href="groups.html">Join Group Activities/Events</a></li>
+            <li><a href="marketplace.html">Buy/Sell Green Products</a></li>
+            <li><a href="actions.html">Learn Sustainability Tips</a></li>
+        </ul>
+    </div>
+
+    <script>
+        // Ensure that the JavaScript from your contract is included for interaction
+        window.onload = async () => {
+            if (window.location.pathname === "/dashboard.html") {
+                await loadDashboard();
+            }
+        };
+
+        // This is the same loadDashboard function as before, to fetch and display details
+        async function loadDashboard() {
+            try {
+                // Ensure user is connected and account is available
+                await requestAccount();
+
+                // Fetch the user ID, name, and email from the contract
+                const userId = await contract.methods.getUserId(userAddress).call();
+                const userDetails = await contract.methods.getUserDetails(userAddress).call();
+                const tokens = await contract.methods.greenTokens(userAddress).call();
+
+                // Display the user ID, name, email, and green tokens on the dashboard
+                document.getElementById("userId").textContent = `User ID: ${userId}`;
+                document.getElementById("userName").textContent = `Name: ${userDetails[0]}`;
+                document.getElementById("userEmail").textContent = `Email: ${userDetails[1]}`;
+                document.getElementById("greenTokens").textContent = `Green Tokens: ${tokens}`;
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+                alert("Failed to load dashboard.");
+            }
+        }
+    </script>
+</body>
+
+</html>
