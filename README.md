@@ -1,4 +1,4 @@
-# GreenLine 🌿
+# EcoLeger🌿
 Building a smarter, eco-friendly future with Generative AI integration.
 <br>
 <br>
